@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IronEdge - Controle Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">☀ Tema Claro</button>
+
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <div class="sidebar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#4ade80">
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </svg>
+      <span>IronEdge</span>
+    </div>
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="18" x2="20" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#4ade80">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+        <span>IronEdge</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="painel">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" rx="1" />
+            <rect x="14" y="3" width="7" height="5" rx="1" />
+            <rect x="14" y="12" width="7" height="9" rx="1" />
+            <rect x="3" y="16" width="7" height="5" rx="1" />
+          </svg>
+          Painel
+        </button>
+        <button class="nav-item" data-section="transacoes">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l4-4 4 4M7 5v14M21 15l-4 4-4-4M17 19V5" />
+          </svg>
+          Transacoes
+        </button>
+        <button class="nav-item" data-section="orcamentos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+            <path d="M4 6v12a2 2 0 0 0 2 2h14v-4" />
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4h-4z" />
+          </svg>
+          Orcamentos
+        </button>
+        <button class="nav-item" data-section="metas">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="6" />
+            <circle cx="12" cy="12" r="2" />
+          </svg>
+          Metas
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-details">
+            <div class="user-name" id="userName">Usuario</div>
+            <div class="user-email" id="userEmail">carregando...</div>
+          </div>
+        </div>
+        <button class="btn btn-logout" onclick="logout()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ============ PAINEL ============ -->
+      <section id="section-painel" class="section active" aria-label="Painel Financeiro">
+        <div class="header">
+          <div>
+            <h1 class="header-title">Painel Financeiro</h1>
+            <p class="header-subtitle" id="headerSubtitle">Visao geral</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" onclick="openTransactionModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Nova Transacao
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <span class="summary-card-label">Saldo Total</span>
+              <div class="summary-card-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </div>
+            </div>
+            <div class="summary-card-value" id="balanceValue">R$ 0,00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <span class="summary-card-label">Receitas do Mes</span>
+              <div class="summary-card-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+              </div>
+            </div>
+            <div class="summary-card-value" id="incomeValue">R$ 0,00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <span class="summary-card-label">Despesas do Mes</span>
+              <div class="summary-card-icon red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+                  <polyline points="16 17 22 17 22 11" />
+                </svg>
+              </div>
+            </div>
+            <div class="summary-card-value" id="expenseValue">R$ 0,00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <span class="summary-card-label">Economia do Mes</span>
+              <div class="summary-card-icon yellow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2" />
+                  <path d="M2 9.5a1 1 0 1 0 2 0 1 1 0 0 0-2 0" />
+                </svg>
+              </div>
+            </div>
+            <div class="summary-card-value" id="savingsValue">R$ 0,00</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Receitas vs Despesas</span>
+              <span class="card-subtitle">Ultimos 6 meses</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="areaChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Despesas por Categoria</span>
+              <span class="card-subtitle">Mes atual</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="bottom-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Transacoes Recentes</span>
+              <button class="btn btn-ghost" onclick="navigateTo('transacoes')">Ver todas</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Descricao</th>
+                  <th>Categoria</th>
+                  <th>Data</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody id="recentTransactionsBody">
+                <tr>
+                  <td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">Carregando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card" style="flex:1">
+              <div class="card-header">
+                <span class="card-title">Orcamentos</span>
+                <button class="btn btn-ghost" onclick="navigateTo('orcamentos')">Ver todos</button>
+              </div>
+              <div class="progress-list" id="budgetSummaryList">
+                <div style="text-align:center;color:var(--text-muted);padding:16px">Carregando...</div>
+              </div>
+            </div>
+            <div class="card" style="flex:1">
+              <div class="card-header">
+                <span class="card-title">Metas de Economia</span>
+                <button class="btn btn-ghost" onclick="navigateTo('metas')">Ver todas</button>
+              </div>
+              <div class="progress-list" id="goalsSummaryList">
+                <div style="text-align:center;color:var(--text-muted);padding:16px">Carregando...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TRANSACOES ============ -->
+      <section id="section-transacoes" class="section" aria-label="Transacoes">
+        <div class="header">
+          <div>
+            <h1 class="header-title">Transacoes</h1>
+            <p class="header-subtitle">Todas as suas movimentacoes financeiras</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" onclick="openTransactionModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Nova Transacao
+            </button>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <select id="filterCategory" class="filter-select">
+            <option value="">Todas Categorias</option>
+          </select>
+          <select id="filterType" class="filter-select">
+            <option value="">Todos Tipos</option>
+            <option value="RECEITA">Receitas</option>
+            <option value="DESPESA">Despesas</option>
+          </select>
+          <input type="date" id="filterStart" class="filter-input" aria-label="Data inicio">
+          <input type="date" id="filterEnd" class="filter-input" aria-label="Data fim">
+          <div class="search-box" style="flex:1;min-width:180px">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="filterSearch" placeholder="Buscar transacao...">
+          </div>
+        </div>
+
+        <div class="card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Descricao</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Valor</th>
+                <th style="width:80px">Acoes</th>
+              </tr>
+            </thead>
+            <tbody id="allTransactionsBody">
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ ORCAMENTOS ============ -->
+      <section id="section-orcamentos" class="section" aria-label="Orcamentos">
+        <div class="header">
+          <div>
+            <h1 class="header-title">Orcamentos</h1>
+            <p class="header-subtitle">Defina limites de gastos por categoria</p>
+          </div>
+        </div>
+        <div id="budgetFullList" style="display:flex;flex-direction:column;gap:12px">
+          <div style="text-align:center;color:var(--text-muted);padding:40px">Carregando...</div>
+        </div>
+      </section>
+
+      <!-- ============ METAS ============ -->
+      <section id="section-metas" class="section" aria-label="Metas">
+        <div class="header">
+          <div>
+            <h1 class="header-title">Metas de Economia</h1>
+            <p class="header-subtitle">Acompanhe suas metas financeiras</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" onclick="openGoalModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Nova Meta
+            </button>
+          </div>
+        </div>
+        <div id="goalsFullGrid" class="goals-grid">
+          <div style="text-align:center;color:var(--text-muted);padding:40px">Carregando...</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+
+  <!-- Transaction Modal -->
+  <div id="transactionModal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title" id="modalTransTitle">Nova Transacao</h2>
+      <div class="form-group">
+        <label class="form-label" for="transDescription">Descricao</label>
+        <input type="text" id="transDescription" class="form-input" placeholder="Ex: Salario, Supermercado...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="transAmount">Valor (R$)</label>
+          <input type="number" id="transAmount" class="form-input" min="0.01" step="0.01" placeholder="0,00">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="transType">Tipo</label>
+          <select id="transType" class="form-select">
+            <option value="DESPESA">Despesa</option>
+            <option value="RECEITA">Receita</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="transCategory">Categoria</label>
+          <select id="transCategory" class="form-select">
+            <option value="">Selecione</option>
+            <option value="Alimentação">Alimentação</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Moradia">Moradia</option>
+            <option value="Lazer">Lazer</option>
+            <option value="Saúde">Saúde</option>
+            <option value="Salário">Salário</option>
+          </select>
+
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="transDate">Data</label>
+          <input type="date" id="transDate" required class="form-input">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('transactionModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTransaction()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Modal -->
+  <div id="budgetModal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title">Editar Orcamento</h2>
+      <p class="confirm-text">Categoria: <strong id="budgetCatName"></strong></p>
+      <div class="form-group">
+        <label class="form-label" for="budgetLimit">Limite mensal (R$)</label>
+        <input type="number" id="budgetLimit" class="form-input" min="0" step="0.01" placeholder="0,00">
+      </div>
+      <p style="font-size:12px;color:var(--text-muted)">Defina 0 para remover o limite.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('budgetModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveBudget()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Modal -->
+  <div id="goalModal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title" id="modalGoalTitle">Nova Meta</h2>
+      <div class="form-group">
+        <label class="form-label" for="goalName">Nome da Meta</label>
+        <input type="text" id="goalName" class="form-input" placeholder="Ex: Reserva de Emergencia">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="goalTarget">Valor Alvo (R$)</label>
+        <input type="number" id="goalTarget" class="form-input" min="0.01" step="0.01" placeholder="0,00">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('goalModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveGoal()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contribute Modal -->
+  <div id="contributeModal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title">Contribuir para Meta</h2>
+      <p class="confirm-text">Meta: <strong id="contributeGoalName"></strong></p>
+      <div class="form-group">
+        <label class="form-label" for="contributeAmount">Valor da Contribuicao (R$)</label>
+        <input type="number" id="contributeAmount" class="form-input" min="0.01" step="0.01" placeholder="0,00">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('contributeModal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveContribution()">Contribuir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal">
+      <h2 class="modal-title">Confirmar Exclusao</h2>
+      <p class="confirm-text">Tem certeza que deseja excluir <strong id="deleteItemName"></strong>? Esta acao nao pode
+        ser desfeita.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancelar</button>
+        <button class="btn btn-danger" onclick="confirmDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="/js/chart-utils.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

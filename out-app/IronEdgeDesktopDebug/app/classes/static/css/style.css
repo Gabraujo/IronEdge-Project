@@ -1,0 +1,380 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg-page: #0c0e14;
+  --bg-page-grad-a: #13151e;
+  --bg-page-grad-b: #0f172a;
+  --container-bg: #181b26;
+  --container-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --text-main: #eef0f6;
+  --text-soft: #8990a8;
+  --text-link: #cfd4e7;
+  --input-bg: #1f2330;
+  --input-text: #eef0f6;
+  --button-bg: #4ade80;
+  --button-text: #0c0e14;
+  --toggle-grad-a: #2db574;
+  --toggle-grad-b: #12945a;
+  --toggle-btn-border: #eef0f6;
+  --theme-btn-bg: #181b26;
+  --theme-btn-border: #2e3348;
+  --theme-btn-text: #eef0f6;
+}
+
+body.light-theme {
+  --bg-page: #c9d6ff;
+  --bg-page-grad-a: #e2e2e2;
+  --bg-page-grad-b: #c9d6ff;
+  --container-bg: #ffffff;
+  --container-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  --text-main: #0f172a;
+  --text-soft: #475569;
+  --text-link: #1e293b;
+  --input-bg: #eeeeee;
+  --input-text: #0f172a;
+  --button-bg: #003e9b;
+  --button-text: #ffffff;
+  --toggle-grad-a: #7095ce;
+  --toggle-grad-b: #003e9b;
+  --toggle-btn-border: #ffffff;
+  --theme-btn-bg: #ffffff;
+  --theme-btn-border: #cbd5e1;
+  --theme-btn-text: #0f172a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  background-color: var(--bg-page);
+  background: linear-gradient(to right, var(--bg-page-grad-a), var(--bg-page-grad-b));
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 2000;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--theme-btn-border);
+  background: var(--theme-btn-bg);
+  color: var(--theme-btn-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--container-bg);
+  border: 1px solid var(--theme-btn-border);
+  border-left: 3px solid var(--button-bg);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--container-shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 360px;
+  animation: toastIn 0.22s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.success { border-left-color: #22c55e; }
+.toast.error { border-left-color: #ef4444; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-brand {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: var(--button-bg);
+  margin-bottom: 18px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 15, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2200;
+  padding: 16px;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  border: 1px solid var(--theme-btn-border);
+  background: var(--container-bg);
+  box-shadow: var(--container-shadow);
+  padding: 18px;
+}
+
+.modal-card h2 {
+  font-size: 22px;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.modal-card p {
+  color: var(--text-soft);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.modal-card input {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: none;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  width: 100%;
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-card button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  font-size: 12px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.modal-card button.btn-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border-color: var(--theme-btn-border);
+}
+
+.container {
+  background-color: var(--container-bg);
+  border-radius: 30px;
+  box-shadow: var(--container-shadow);
+  position: relative;
+  overflow: hidden;
+  width: 768px;
+  max-width: 100%;
+  min-height: 480px;
+}
+
+.container p {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.3px;
+  margin: 20px 0;
+}
+
+.container span {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.container a {
+  color: var(--text-link);
+  font-size: 13px;
+  text-decoration: none;
+  margin: 15px 0 10px;
+}
+
+.container button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  font-size: 12px;
+  padding: 10px 45px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.container button.hidden {
+  background-color: transparent;
+  border-color: var(--toggle-btn-border);
+  color: #ffffff;
+}
+
+.container form {
+  background-color: var(--container-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 40px;
+  height: 100%;
+}
+
+.container h1 {
+  color: var(--text-main);
+}
+
+.container input {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: none;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  width: 100%;
+  outline: none;
+}
+
+.container input:-webkit-autofill,
+.container input:-webkit-autofill:hover,
+.container input:-webkit-autofill:focus,
+.container input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+  -webkit-text-fill-color: var(--input-text) !important;
+  caret-color: var(--input-text);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+}
+
+.sign-in {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+.container.active .sign-in {
+  transform: translateX(100%);
+}
+
+.sign-up {
+  left: 0;
+  width: 50%;
+  opacity: 0;
+  z-index: 1;
+}
+
+.container.active .sign-up {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+}
+
+.toggle-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  border-radius: 150px 0 0 100px;
+  z-index: 1000;
+}
+
+.container.active .toggle-container {
+  transform: translateX(-100%);
+  border-radius: 0 150px 100px 0;
+}
+
+.toggle {
+  background: linear-gradient(to right, var(--toggle-grad-a), var(--toggle-grad-b));
+  color: white;
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+  transform: translateX(50%);
+}
+
+.toggle-panel {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 30px;
+  text-align: center;
+  top: 0;
+  transform: translateX(0);
+  transition: all 0.6s ease-in-out;
+}
+
+.toggle-panel h1,
+.toggle-panel p {
+  color: #ffffff;
+}
+
+.toggle-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.container.active .toggle-right {
+  transform: translateX(200%);
+}
+
+@media (max-width: 800px) {
+  .container {
+    width: 95%;
+    min-height: 540px;
+  }
+}

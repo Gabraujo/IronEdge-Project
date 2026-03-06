@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <title>Iron Edge</title>
+  </head>
+
+  <body>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">☀ Tema Claro</button>
+    <div class="auth-brand">IronEdge</div>
+    <div class="container" id="container">
+
+      <!-- REGISTER -->
+      <div class="form-container sign-up">
+        <form onsubmit="registerUser(event)">
+          <h1>Criar Conta</h1>
+          <span>faça o registro usando seu email</span>
+
+          <input
+            id="register-email"
+            type="email"
+            placeholder="Email"
+            required
+          />
+
+          <input
+            id="register-password"
+            type="password"
+            placeholder="Senha"
+            required
+          />
+
+          <button type="submit">Inscrever-se</button>
+        </form>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="form-container sign-in">
+        <form onsubmit="loginUser(event)">
+          <h1>Login</h1>
+
+          <span>faça login usando seu email</span>
+
+          <input
+            id="login-email"
+            type="email"
+            placeholder="Email"
+            required
+          />
+
+          <input
+            id="login-password"
+            type="password"
+            placeholder="Senha"
+            required
+          />
+
+          <a href="#" id="forgotPasswordLink">Esqueceu sua senha?</a>
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+
+      <!-- TOGGLE -->
+      <div class="toggle-container">
+        <div class="toggle">
+          <div class="toggle-panel toggle-left">
+            <h1>Bem-Vindo de Volta!</h1>
+            <p>Insira seus dados pessoais para usar todos os recursos do site</p>
+            <button class="hidden" id="login">Login</button>
+          </div>
+
+          <div class="toggle-panel toggle-right">
+            <h1>Bem-Vindo!</h1>
+            <p>Registre seus dados pessoais para usar todos os recursos do site</p>
+            <button class="hidden" id="register">Registrar</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+    <div id="forgotPasswordModal" class="modal-overlay">
+      <div class="modal-card">
+        <h2>Redefinir Senha</h2>
+        <p>Informe seu e-mail e a nova senha.</p>
+        <form onsubmit="resetPassword(event)">
+          <input id="forgot-email" type="email" placeholder="Email" required />
+          <input id="forgot-password" type="password" placeholder="Nova senha" required />
+          <input id="forgot-password-confirm" type="password" placeholder="Confirmar nova senha" required />
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="cancelForgotPassword">Cancelar</button>
+            <button type="submit">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
