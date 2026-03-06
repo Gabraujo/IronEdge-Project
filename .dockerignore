@@ -1,0 +1,17 @@
+.git
+.github
+.idea
+.vscode
+
+target
+dist
+out-app
+out-app-test
+data
+.tools
+
+*.log
+*.db
+*.trace.db
+
+node_modules
