@@ -1052,13 +1052,15 @@ html, body {
   .goals-grid { grid-template-columns: 1fr; }
   .modal-overlay {
     padding: 14px;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
   }
   .modal {
-    margin: 0;
-    max-width: none;
+    margin: 0 auto;
+    width: 100%;
+    max-width: min(560px, calc(100% - 28px));
     max-height: min(84vh, 700px);
-    border-radius: 16px 16px 0 0;
+    border-radius: var(--radius-lg);
     padding: 20px 16px;
   }
   .card { padding: 14px; }
