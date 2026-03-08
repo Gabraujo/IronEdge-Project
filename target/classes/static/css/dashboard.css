@@ -801,8 +801,9 @@ html, body {
   border-radius: var(--radius-lg);
   padding: 28px;
   width: 100%;
-  max-width: 480px;
+  max-width: 920px;
   max-height: min(88vh, 720px);
+  margin: 0 auto;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   animation: modalIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1140,6 +1141,16 @@ html, body {
   }
   .progress-item-values { text-align: left; }
   .goal-actions .btn { width: 100%; }
+}
+
+@media (min-width: 769px) {
+  .modal-overlay {
+    padding: 24px clamp(48px, 7vw, 180px);
+  }
+
+  .modal {
+    width: min(100%, 920px);
+  }
 }
 
 @media (max-width: 480px) {
