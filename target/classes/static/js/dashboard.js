@@ -283,22 +283,22 @@ async function loadRecentTransactions() {
     const recent = sorted.slice(0, 6);
 
     if (recent.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">Nenhuma transação encontrada</td></tr>`;
+        tbody.innerHTML = `<tr class="table-empty-row"><td class="table-empty-cell" colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">Nenhuma transação encontrada</td></tr>`;
         return;
     }
 
     // Remove o texto "Carregando..." e renderiza
     tbody.innerHTML = recent.map(t => `
         <tr>
-            <td>
+            <td data-label="Descricao">
                 <div class="transaction-desc">
                     <span class="transaction-icon ${getTransactionIconClass(t.type)}">${getTransactionIconSymbol(t.type)}</span>
                     <span>${escapeHtml(t.description || "-")}</span>
                 </div>
             </td>
-            <td><span class="badge badge-category ${getCategoryBadgeClass(t.category)}">${escapeHtml(t.category || "Geral")}</span></td>
-            <td>${new Date(t.date).toLocaleDateString('pt-BR')}</td>
-            <td>${renderAmount(t.amount, t.type)}</td>
+            <td data-label="Categoria"><span class="badge badge-category ${getCategoryBadgeClass(t.category)}">${escapeHtml(t.category || "Geral")}</span></td>
+            <td data-label="Data">${new Date(t.date).toLocaleDateString('pt-BR')}</td>
+            <td data-label="Valor">${renderAmount(t.amount, t.type)}</td>
         </tr>
     `).join('');
 }
@@ -316,23 +316,23 @@ async function loadAllTransactions() {
     transactionsCache = sorted;
 
     if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px">Nenhuma transação encontrada</td></tr>`;
+        tbody.innerHTML = `<tr class="table-empty-row"><td class="table-empty-cell" colspan="6" style="text-align:center;color:var(--text-muted);padding:40px">Nenhuma transação encontrada</td></tr>`;
         return;
     }
 
     tbody.innerHTML = sorted.map(t => `
         <tr>
-            <td>
+            <td data-label="Descricao">
                 <div class="transaction-desc">
                     <span class="transaction-icon ${getTransactionIconClass(t.type)}">${getTransactionIconSymbol(t.type)}</span>
                     <span>${escapeHtml(t.description || "-")}</span>
                 </div>
             </td>
-            <td><span class="badge badge-category ${getCategoryBadgeClass(t.category)}">${escapeHtml(t.category || "Geral")}</span></td>
-            <td>${renderTypeBadge(t.type)}</td>
-            <td>${new Date(t.date).toLocaleDateString("pt-BR")}</td>
-            <td>${renderAmount(t.amount, t.type)}</td>
-            <td>
+            <td data-label="Categoria"><span class="badge badge-category ${getCategoryBadgeClass(t.category)}">${escapeHtml(t.category || "Geral")}</span></td>
+            <td data-label="Tipo">${renderTypeBadge(t.type)}</td>
+            <td data-label="Data">${new Date(t.date).toLocaleDateString("pt-BR")}</td>
+            <td data-label="Valor">${renderAmount(t.amount, t.type)}</td>
+            <td data-label="Acoes" class="table-cell-actions">
                 <div class="table-actions">
                     <button class="btn btn-ghost btn-icon action-btn action-edit" onclick="editTransaction(${t.id})" aria-label="Editar transação">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
