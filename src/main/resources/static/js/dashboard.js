@@ -15,6 +15,7 @@ let investmentsCache = [];
 let editingInvestmentId = null;
 let contributingInvestmentId = null;
 let deletingInvestmentId = null;
+let chartResizeTimer = null;
 const THEME_KEY = "ironedge-theme";
 const BUDGET_DEFAULT_CATEGORIES = [
     "Moradia",
@@ -27,12 +28,38 @@ const BUDGET_DEFAULT_CATEGORIES = [
     "Investimentos"
 ];
 
+function getThemeToggleIcon(nextTheme) {
+    if (nextTheme === "light") {
+        return `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <line x1="12" y1="2.5" x2="12" y2="5"></line>
+                <line x1="12" y1="19" x2="12" y2="21.5"></line>
+                <line x1="2.5" y1="12" x2="5" y2="12"></line>
+                <line x1="19" y1="12" x2="21.5" y2="12"></line>
+                <line x1="5.2" y1="5.2" x2="7" y2="7"></line>
+                <line x1="17" y1="17" x2="18.8" y2="18.8"></line>
+                <line x1="5.2" y1="18.8" x2="7" y2="17"></line>
+                <line x1="17" y1="7" x2="18.8" y2="5.2"></line>
+            </svg>
+        `;
+    }
+
+    return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"></path>
+        </svg>
+    `;
+}
+
 function applyTheme(theme) {
     const isLight = theme === "light";
     document.body.classList.toggle("light-theme", isLight);
     const themeToggle = document.getElementById("themeToggle");
     if (themeToggle) {
-        themeToggle.textContent = isLight ? "🌙 Tema Escuro" : "☀ Tema Claro";
+        const nextTheme = isLight ? "dark" : "light";
+        themeToggle.innerHTML = getThemeToggleIcon(nextTheme);
+        themeToggle.setAttribute("aria-label", nextTheme === "light" ? "Ativar tema claro" : "Ativar tema escuro");
     }
 }
 
@@ -305,8 +332,7 @@ async function loadRecentTransactions() {
 
 async function loadAllTransactions() {
     const data = await api("/transactions");
-    const tbody = document.getElementById("allTransactionsBody");
-    if (!data || !tbody) return;
+    if (!data) return;
 
     const sorted = [...data].sort((a, b) => {
         const dateDiff = new Date(b.date) - new Date(a.date);
@@ -314,13 +340,20 @@ async function loadAllTransactions() {
         return (b.id || 0) - (a.id || 0);
     });
     transactionsCache = sorted;
+    populateTransactionCategoryFilter(sorted);
+    applyTransactionFilters();
+}
 
-    if (sorted.length === 0) {
+function renderAllTransactionsTable(transactions) {
+    const tbody = document.getElementById("allTransactionsBody");
+    if (!tbody) return;
+
+    if (!transactions.length) {
         tbody.innerHTML = `<tr class="table-empty-row"><td class="table-empty-cell" colspan="6" style="text-align:center;color:var(--text-muted);padding:40px">Nenhuma transação encontrada</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = sorted.map(t => `
+    tbody.innerHTML = transactions.map(t => `
         <tr>
             <td data-label="Descricao">
                 <div class="transaction-desc">
@@ -352,6 +385,77 @@ async function loadAllTransactions() {
             </td>
         </tr>
     `).join("");
+}
+
+function normalizeSearchText(value) {
+    return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+}
+
+function populateTransactionCategoryFilter(transactions) {
+    const categoryFilter = document.getElementById("filterCategory");
+    if (!categoryFilter) return;
+
+    const selected = categoryFilter.value || "";
+    const categories = Array.from(new Set(
+        transactions
+            .map(t => t.category || "Geral")
+            .map(c => formatCategoryLabel(c))
+    )).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+    categoryFilter.innerHTML = `
+        <option value="">Todas Categorias</option>
+        ${categories.map(category => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("")}
+    `;
+
+    if (selected && categories.includes(selected)) {
+        categoryFilter.value = selected;
+    }
+}
+
+function applyTransactionFilters() {
+    if (!Array.isArray(transactionsCache)) return;
+
+    const category = document.getElementById("filterCategory")?.value || "";
+    const type = document.getElementById("filterType")?.value || "";
+    const start = document.getElementById("filterStart")?.value || "";
+    const end = document.getElementById("filterEnd")?.value || "";
+    const search = normalizeSearchText(document.getElementById("filterSearch")?.value || "");
+
+    const filtered = transactionsCache.filter(transaction => {
+        const txCategory = formatCategoryLabel(transaction.category || "Geral");
+        if (category && txCategory !== category) return false;
+        if (type && transaction.type !== type) return false;
+
+        const txDate = String(transaction.date || "").slice(0, 10);
+        if ((start || end) && !txDate) return false;
+        if (start && txDate && txDate < start) return false;
+        if (end && txDate && txDate > end) return false;
+
+        if (search) {
+            const haystack = normalizeSearchText(`${transaction.description || ""} ${txCategory} ${transaction.type || ""}`);
+            if (!haystack.includes(search)) return false;
+        }
+
+        return true;
+    });
+
+    renderAllTransactionsTable(filtered);
+}
+
+function setupTransactionFilters() {
+    const filterIds = ["filterCategory", "filterType", "filterStart", "filterEnd", "filterSearch"];
+    filterIds.forEach((id) => {
+        const element = document.getElementById(id);
+        if (!element || element.dataset.bound === "true") return;
+
+        const eventName = id === "filterSearch" ? "input" : "change";
+        element.addEventListener(eventName, applyTransactionFilters);
+        element.dataset.bound = "true";
+    });
 }
 
 function resetTransactionForm() {
@@ -1034,9 +1138,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     setupNav();
+    setupTransactionFilters();
     loadDashboardData();
     closeSidebarIfDesktop();
     window.addEventListener("resize", closeSidebarIfDesktop);
+    window.addEventListener("resize", () => {
+        if (chartResizeTimer) clearTimeout(chartResizeTimer);
+        chartResizeTimer = setTimeout(() => {
+            if (typeof ChartUtils !== "undefined") {
+                ChartUtils.redrawFromCache();
+            }
+        }, 140);
+    });
 
     document.getElementById("btnLogout")?.addEventListener("click", logout);
 });

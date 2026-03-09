@@ -571,18 +571,26 @@ html, body {
   bottom: max(14px, env(safe-area-inset-bottom));
   right: max(14px, env(safe-area-inset-right));
   z-index: 300;
-  padding: 9px 14px;
-  border-radius: 999px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   border: 1px solid var(--theme-btn-border);
   background: var(--theme-btn-bg);
   color: var(--theme-btn-text);
-  font-size: 12px;
-  font-weight: 700;
   cursor: pointer;
-  max-width: calc(100vw - 24px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .transaction-icon.icon-income {
@@ -1007,8 +1015,11 @@ html, body {
   .summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .charts-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
   .bottom-grid { grid-template-columns: 1fr; }
   .main-content { padding: 24px; }
   .summary-card-value { font-size: 24px; }
@@ -1027,9 +1038,8 @@ html, body {
   .theme-toggle {
     bottom: max(10px, env(safe-area-inset-bottom));
     right: max(10px, env(safe-area-inset-right));
-    font-size: 12px;
-    padding: 9px 12px;
-    max-width: 65vw;
+    width: 40px;
+    height: 40px;
   }
   .header {
     flex-direction: column;
@@ -1125,6 +1135,14 @@ html, body {
   }
   .data-table .table-empty-row td.table-empty-cell::before { content: none; }
   .filters-bar { flex-direction: column; align-items: stretch; }
+  .filters-bar .search-box {
+    order: -1;
+    margin-bottom: 2px;
+  }
+  .search-box-fluid {
+    flex: 0 0 auto;
+    width: 100%;
+  }
   .filter-select, .filter-input { width: 100%; }
   .search-box input { font-size: 14px; }
   .table-actions { justify-content: flex-end; }
