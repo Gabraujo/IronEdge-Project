@@ -4,6 +4,7 @@
    ======================================== */
 
 const ChartUtils = {
+  lastSummaryData: null,
 
   formatCurrency(value) {
     return new Intl.NumberFormat('pt-BR', {
@@ -19,6 +20,15 @@ const ChartUtils = {
 
   getStyle(prop) {
     return getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+  },
+
+  truncateText(ctx, text, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    let output = text;
+    while (output.length > 1 && ctx.measureText(output + "...").width > maxWidth) {
+      output = output.slice(0, -1);
+    }
+    return output + "...";
   },
 
   drawAreaChart(canvasId, data) {
@@ -161,7 +171,12 @@ const ChartUtils = {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.parentElement.getBoundingClientRect();
     const W = rect.width;
-    const H = 280;
+    const useSideLegend = W >= 460;
+    const maxVisibleLegendItems = useSideLegend ? 6 : 8;
+    const hiddenItems = Math.max(0, data.length - maxVisibleLegendItems);
+    const H = useSideLegend
+      ? 280
+      : Math.max(320, 240 + Math.min(maxVisibleLegendItems, data.length) * 26 + (hiddenItems > 0 ? 22 : 0));
 
     canvas.width = W * dpr;
     canvas.height = H * dpr;
@@ -180,10 +195,9 @@ const ChartUtils = {
       return;
     }
 
-    const isWide = W > 350;
-    const centerX = isWide ? W * 0.32 : W / 2;
-    const centerY = isWide ? H / 2 : H * 0.35;
-    const radius = Math.min(isWide ? 95 : 75, centerY - 15);
+    const centerX = useSideLegend ? W * 0.32 : W / 2;
+    const centerY = useSideLegend ? H / 2 : 98;
+    const radius = Math.min(useSideLegend ? 95 : 78, centerY - 15);
     const innerRadius = radius * 0.58;
     const gap = 0.02;
 
@@ -220,14 +234,17 @@ const ChartUtils = {
     ctx.fillText('Total', centerX, centerY + 14);
 
     // Legenda
-    if (isWide) {
-      const legendX = W * 0.62;
+    if (useSideLegend) {
+      const legendX = W * 0.60;
+      const legendW = W - legendX - 12;
       let legendY = 35;
-      const spacing = Math.min(36, (H - 70) / data.length);
+      const legendItems = data.slice(0, maxVisibleLegendItems);
+      const spacing = Math.min(36, (H - 70) / Math.max(legendItems.length, 1));
 
-      data.forEach(d => {
+      legendItems.forEach(d => {
         if (legendY > H - 20) return;
         const pct = ((d.amount / total) * 100).toFixed(1);
+        const category = this.truncateText(ctx, d.categoryName, Math.max(70, legendW - 22));
 
         ctx.fillStyle = d.color;
         ctx.beginPath();
@@ -237,23 +254,65 @@ const ChartUtils = {
         ctx.fillStyle = '#eef0f6';
         ctx.font = '13px Inter, system-ui, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText(d.categoryName, legendX + 16, legendY + 3);
+        ctx.fillText(category, legendX + 16, legendY + 3);
 
         ctx.fillStyle = '#555b73';
         ctx.font = '11px Inter, system-ui, sans-serif';
-        ctx.fillText(this.formatCurrency(d.amount) + '  (' + pct + '%)', legendX + 16, legendY + 18);
+        ctx.fillText(this.formatCurrency(d.amount) + ' (' + pct + '%)', legendX + 16, legendY + 18);
 
         legendY += spacing;
       });
+    } else {
+      const legendX = 18;
+      let legendY = 205;
+      const legendW = W - 36;
+      const legendItems = data.slice(0, maxVisibleLegendItems);
+
+      legendItems.forEach(d => {
+        const pct = ((d.amount / total) * 100).toFixed(1);
+        const valueText = this.formatCurrency(d.amount) + ' (' + pct + '%)';
+        const categoryMaxW = Math.max(80, legendW - ctx.measureText(valueText).width - 34);
+
+        ctx.fillStyle = d.color;
+        ctx.beginPath();
+        ctx.roundRect(legendX, legendY - 8, 10, 10, 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#eef0f6';
+        ctx.font = '12px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(this.truncateText(ctx, d.categoryName, categoryMaxW), legendX + 16, legendY + 1);
+
+        ctx.fillStyle = '#555b73';
+        ctx.font = '11px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(valueText, W - 18, legendY + 1);
+
+        legendY += 24;
+      });
+
+      if (hiddenItems > 0) {
+        ctx.fillStyle = '#555b73';
+        ctx.font = '11px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`+${hiddenItems} categorias`, legendX, legendY + 4);
+      }
     }
   },
 
   redrawAll(summaryData) {
+    this.lastSummaryData = summaryData;
     if (summaryData.monthlyData) {
       this.drawAreaChart('areaChart', summaryData.monthlyData);
     }
     if (summaryData.categoryBreakdown) {
       this.drawPieChart('pieChart', summaryData.categoryBreakdown);
+    }
+  },
+
+  redrawFromCache() {
+    if (this.lastSummaryData) {
+      this.redrawAll(this.lastSummaryData);
     }
   }
 };

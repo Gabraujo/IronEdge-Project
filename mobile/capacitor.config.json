@@ -1,0 +1,10 @@
+{
+  "appId": "com.ironedge.app",
+  "appName": "IronEdge",
+  "webDir": "www",
+  "server": {
+    "url": "https://ironedge-project.onrender.com",
+    "cleartext": true,
+    "androidScheme": "https"
+  }
+}

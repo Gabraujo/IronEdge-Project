@@ -811,3 +811,9 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/gabri/D
 	... 65 more
 2026-03-06 15:58:59.748657-03:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2026-03-08 19:04:27.063027-03:00 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2026-03-08 21:23:16.178622-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2026-03-08 21:23:32.723149-03:00 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]

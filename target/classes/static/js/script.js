@@ -12,6 +12,30 @@ const forgotPasswordModal = document.getElementById("forgotPasswordModal");
 const cancelForgotPasswordBtn = document.getElementById("cancelForgotPassword");
 const THEME_KEY = "ironedge-theme";
 
+function getThemeToggleIcon(nextTheme) {
+  if (nextTheme === "light") {
+    return `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <line x1="12" y1="2.5" x2="12" y2="5"></line>
+        <line x1="12" y1="19" x2="12" y2="21.5"></line>
+        <line x1="2.5" y1="12" x2="5" y2="12"></line>
+        <line x1="19" y1="12" x2="21.5" y2="12"></line>
+        <line x1="5.2" y1="5.2" x2="7" y2="7"></line>
+        <line x1="17" y1="17" x2="18.8" y2="18.8"></line>
+        <line x1="5.2" y1="18.8" x2="7" y2="17"></line>
+        <line x1="17" y1="7" x2="18.8" y2="5.2"></line>
+      </svg>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"></path>
+    </svg>
+  `;
+}
+
 function showToast(message, type = "success") {
   if (!toastContainer) return;
   const toast = document.createElement("div");
@@ -31,7 +55,9 @@ function applyTheme(theme) {
   const isLight = theme === "light";
   document.body.classList.toggle("light-theme", isLight);
   if (themeToggle) {
-    themeToggle.textContent = isLight ? "🌙 Tema Escuro" : "☀ Tema Claro";
+    const nextTheme = isLight ? "dark" : "light";
+    themeToggle.innerHTML = getThemeToggleIcon(nextTheme);
+    themeToggle.setAttribute("aria-label", nextTheme === "light" ? "Ativar tema claro" : "Ativar tema escuro");
   }
 }
 
