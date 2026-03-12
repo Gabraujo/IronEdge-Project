@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ironedge.dto.AuthRequest;
 import com.ironedge.dto.PasswordResetConfirmRequest;
 import com.ironedge.dto.PasswordResetRequest;
+import com.ironedge.dto.PasswordResetVerifyRequest;
 import com.ironedge.model.PasswordResetToken;
 import com.ironedge.model.User;
 import com.ironedge.repository.PasswordResetTokenRepository;
@@ -56,6 +57,8 @@ public class AuthController {
 
     @Value("${app.mail.from:no-reply@ironedge.local}")
     private String mailFrom;
+    @Value("${app.mail.expose-code-when-smtp-missing:false}")
+    private boolean exposeCodeWhenSmtpMissing;
 
     private boolean isBcryptHash(String value) {
         return value != null && (value.startsWith("$2a$") || value.startsWith("$2b$") || value.startsWith("$2y$"));
@@ -101,10 +104,10 @@ public class AuthController {
         return sb.toString();
     }
 
-    private void sendResetEmail(String to, String code) {
+    private boolean sendResetEmail(String to, String code) {
         if (!mailIsConfigured()) {
             logger.warn("SMTP não configurado. Código de reset para {}: {}", to, code);
-            return;
+            return false;
         }
 
         try {
@@ -115,8 +118,10 @@ public class AuthController {
             message.setText("Use este código para concluir a redefinição da sua senha: " + code
                     + "\nEste código expira em " + RESET_CODE_MINUTES + " minutos.");
             mailSender.send(message);
+            return true;
         } catch (Exception ex) {
             logger.error("Falha ao enviar email de redefinição para {}: {}", to, ex.getMessage());
+            return false;
         }
     }
 
@@ -152,7 +157,7 @@ public class AuthController {
                 "message", "Usuário registrado com sucesso"));
     }
 
-    @PostMapping("/forgot-password/request")
+        @PostMapping("/forgot-password/request")
     public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequest request) {
         if (request == null || request.getEmail() == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Email é obrigatório"));
@@ -164,18 +169,77 @@ public class AuthController {
         }
 
         List<User> users = userRepository.findAllByEmailIgnoreCaseOrderByIdDesc(email);
-        if (!users.isEmpty()) {
-            String code = generateNumericCode(RESET_CODE_LENGTH);
-            PasswordResetToken token = new PasswordResetToken();
-            token.setEmail(email);
-            token.setCodeHash(passwordEncoder.encode(code));
-            token.setExpiresAt(LocalDateTime.now().plusMinutes(RESET_CODE_MINUTES));
-            passwordResetTokenRepository.save(token);
-            sendResetEmail(email, code);
+        if (users.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("message", "Usuário não encontrado"));
         }
 
-        // Resposta genérica para não revelar existência do email
+        if (!mailIsConfigured()) {
+            return ResponseEntity.status(500).body(Map.of("message", "Servidor de email não configurado"));
+        }
+
+        String code = generateNumericCode(RESET_CODE_LENGTH);
+        PasswordResetToken token = new PasswordResetToken();
+        token.setEmail(email);
+        token.setCodeHash(passwordEncoder.encode(code));
+        token.setExpiresAt(LocalDateTime.now().plusMinutes(RESET_CODE_MINUTES));
+        passwordResetTokenRepository.save(token);
+
+        boolean mailSent = sendResetEmail(email, code);
+
+        if (!mailSent && exposeCodeWhenSmtpMissing) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Código de verificação gerado (SMTP não configurado)",
+                    "debugCode", code));
+        }
+
+        if (!mailSent) {
+            return ResponseEntity.status(500).body(Map.of("message", "Falha ao enviar código. Verifique SMTP."));
+        }
+
         return ResponseEntity.ok(Map.of("message", "Código de verificação enviado"));
+    }
+
+    @PostMapping("/forgot-password/verify")
+    public ResponseEntity<?> verifyPasswordReset(@RequestBody PasswordResetVerifyRequest request) {
+        if (request == null || request.getEmail() == null || request.getCode() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email e código são obrigatórios"));
+        }
+
+        String email = request.getEmail().trim().toLowerCase();
+        String code = request.getCode().trim();
+
+        if (email.isBlank() || code.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email e código são obrigatórios"));
+        }
+
+        PasswordResetToken token = passwordResetTokenRepository
+                .findTopByEmailIgnoreCaseAndUsedFalseAndExpiresAtAfterOrderByCreatedAtDesc(email, LocalDateTime.now())
+                .orElse(null);
+
+        if (token == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Código inválido ou expirado"));
+        }
+
+        if (token.getAttempts() >= RESET_MAX_ATTEMPTS) {
+            token.setUsed(true);
+            passwordResetTokenRepository.save(token);
+            return ResponseEntity.badRequest().body(Map.of("message", "Número máximo de tentativas excedido"));
+        }
+
+        boolean codeMatches;
+        try {
+            codeMatches = passwordEncoder.matches(code, token.getCodeHash());
+        } catch (IllegalArgumentException ex) {
+            codeMatches = false;
+        }
+
+        if (!codeMatches) {
+            token.setAttempts(token.getAttempts() + 1);
+            passwordResetTokenRepository.save(token);
+            return ResponseEntity.badRequest().body(Map.of("message", "Código inválido ou expirado"));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Código verificado"));
     }
 
     @PostMapping("/forgot-password/confirm")
@@ -313,3 +377,4 @@ public class AuthController {
         session.invalidate();
     }
 }
+

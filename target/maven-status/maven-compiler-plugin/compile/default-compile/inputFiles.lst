@@ -22,6 +22,7 @@ C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedg
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\repository\PasswordResetTokenRepository.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\DashBoardService.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\GoalService.java
+C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\dto\PasswordResetVerifyRequest.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\config\SecurityBeans.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\model\PasswordResetToken.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\GoalController.java

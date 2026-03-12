@@ -12,6 +12,7 @@ const forgotPasswordModal = document.getElementById("forgotPasswordModal");
 const cancelForgotPasswordBtn = document.getElementById("cancelForgotPassword");
 const sendForgotCodeBtn = document.getElementById("sendForgotCode");
 const confirmForgotPasswordBtn = document.getElementById("confirmForgotPassword");
+const verifyForgotCodeBtn = document.getElementById("verifyForgotCode");
 const forgotCodeInput = document.getElementById("forgot-code");
 const forgotPasswordInput = document.getElementById("forgot-password");
 const forgotPasswordConfirmInput = document.getElementById("forgot-password-confirm");
@@ -100,7 +101,10 @@ function resetForgotModalState() {
   if (forgotSubtitle) {
     forgotSubtitle.textContent = "Informe seu e-mail para receber um código de verificação.";
   }
-  [forgotCodeInput, forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn].forEach((el) => {
+  [forgotCodeInput].forEach((el) => {
+    if (el) el.classList.add("hidden-block");
+  });
+  [forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn, verifyForgotCodeBtn].forEach((el) => {
     if (el) el.classList.add("hidden-block");
   });
   if (sendForgotCodeBtn) {
@@ -114,6 +118,13 @@ function resetForgotModalState() {
   if (forgotCodeInput) forgotCodeInput.value = "";
   if (forgotPasswordInput) forgotPasswordInput.value = "";
   if (forgotPasswordConfirmInput) forgotPasswordConfirmInput.value = "";
+  if (verifyForgotCodeBtn) {
+    verifyForgotCodeBtn.disabled = false;
+  }
+  if (confirmForgotPasswordBtn) {
+    confirmForgotPasswordBtn.disabled = true;
+  }
+  window.__forgotCodeVerified = false;
 }
 
 if (forgotPasswordLink) {
@@ -137,6 +148,10 @@ if (forgotPasswordModal) {
 
 if (sendForgotCodeBtn) {
   sendForgotCodeBtn.addEventListener("click", requestPasswordResetCode);
+}
+
+if (verifyForgotCodeBtn) {
+  verifyForgotCodeBtn.addEventListener("click", verifyForgotCode);
 }
 
 if (registerBtn) {
@@ -267,14 +282,13 @@ async function requestPasswordResetCode() {
     showToast(data.message || "Código de verificação enviado", "success");
 
     if (forgotSubtitle) {
-      forgotSubtitle.textContent = "Digite o código recebido e escolha a nova senha.";
+      forgotSubtitle.textContent = "Digite o código recebido para avançar.";
     }
     if (forgotEmailInput) {
       forgotEmailInput.disabled = true;
     }
-    [forgotCodeInput, forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn].forEach((el) => {
-      if (el) el.classList.remove("hidden-block");
-    });
+    if (forgotCodeInput) forgotCodeInput.classList.remove("hidden-block");
+    if (verifyForgotCodeBtn) verifyForgotCodeBtn.classList.remove("hidden-block");
   } catch (error) {
     console.error(error);
     showToast("Erro de conexão com o servidor", "error");
@@ -290,6 +304,11 @@ async function resetPassword(event) {
   const code = forgotCodeInput ? forgotCodeInput.value.trim() : "";
   const password = forgotPasswordInput ? forgotPasswordInput.value.trim() : "";
   const passwordConfirm = forgotPasswordConfirmInput ? forgotPasswordConfirmInput.value.trim() : "";
+
+  if (!window.__forgotCodeVerified) {
+    showToast("Valide o código antes de redefinir a senha", "error");
+    return;
+  }
 
   if (!email || !code || !password) {
     showToast("Email, código e nova senha são obrigatórios", "error");
@@ -323,5 +342,50 @@ async function resetPassword(event) {
   } catch (error) {
     console.error(error);
     showToast("Erro de conexão com o servidor", "error");
+  }
+}
+
+async function verifyForgotCode() {
+  const email = forgotEmailInput ? forgotEmailInput.value.trim() : "";
+  const code = forgotCodeInput ? forgotCodeInput.value.trim() : "";
+
+  if (!email || !code) {
+    showToast("Informe email e código", "error");
+    return;
+  }
+
+  try {
+    verifyForgotCodeBtn.disabled = true;
+    const response = await fetch("/auth/forgot-password/verify", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, code })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      showToast(data.message || "Código inválido ou expirado", "error");
+      verifyForgotCodeBtn.disabled = false;
+      return;
+    }
+
+    window.__forgotCodeVerified = true;
+    showToast(data.message || "Código verificado", "success");
+    if (forgotSubtitle) {
+      forgotSubtitle.textContent = "Defina a nova senha.";
+    }
+    [forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn].forEach((el) => {
+      if (el) el.classList.remove("hidden-block");
+    });
+    if (verifyForgotCodeBtn) verifyForgotCodeBtn.classList.add("hidden-block");
+    if (forgotCodeInput) forgotCodeInput.disabled = true;
+    if (confirmForgotPasswordBtn) confirmForgotPasswordBtn.disabled = false;
+  } catch (error) {
+    console.error(error);
+    showToast("Erro de conexão com o servidor", "error");
+    verifyForgotCodeBtn.disabled = false;
   }
 }
