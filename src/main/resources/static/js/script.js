@@ -10,6 +10,13 @@ const toastContainer = document.getElementById("toastContainer");
 const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const forgotPasswordModal = document.getElementById("forgotPasswordModal");
 const cancelForgotPasswordBtn = document.getElementById("cancelForgotPassword");
+const sendForgotCodeBtn = document.getElementById("sendForgotCode");
+const confirmForgotPasswordBtn = document.getElementById("confirmForgotPassword");
+const forgotCodeInput = document.getElementById("forgot-code");
+const forgotPasswordInput = document.getElementById("forgot-password");
+const forgotPasswordConfirmInput = document.getElementById("forgot-password-confirm");
+const forgotEmailInput = document.getElementById("forgot-email");
+const forgotSubtitle = document.getElementById("forgot-subtitle");
 const THEME_KEY = "ironedge-theme";
 
 function getThemeToggleIcon(nextTheme) {
@@ -78,12 +85,35 @@ initTheme();
 
 function openForgotPasswordModal() {
   if (!forgotPasswordModal) return;
+  resetForgotModalState();
   forgotPasswordModal.classList.add("open");
 }
 
 function closeForgotPasswordModal() {
   if (!forgotPasswordModal) return;
+  resetForgotModalState();
   forgotPasswordModal.classList.remove("open");
+}
+
+function resetForgotModalState() {
+  if (!forgotPasswordModal) return;
+  if (forgotSubtitle) {
+    forgotSubtitle.textContent = "Informe seu e-mail para receber um código de verificação.";
+  }
+  [forgotCodeInput, forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn].forEach((el) => {
+    if (el) el.classList.add("hidden-block");
+  });
+  if (sendForgotCodeBtn) {
+    sendForgotCodeBtn.disabled = false;
+    sendForgotCodeBtn.textContent = "Enviar código";
+  }
+  if (forgotEmailInput) {
+    forgotEmailInput.value = "";
+    forgotEmailInput.disabled = false;
+  }
+  if (forgotCodeInput) forgotCodeInput.value = "";
+  if (forgotPasswordInput) forgotPasswordInput.value = "";
+  if (forgotPasswordConfirmInput) forgotPasswordConfirmInput.value = "";
 }
 
 if (forgotPasswordLink) {
@@ -103,6 +133,10 @@ if (forgotPasswordModal) {
       closeForgotPasswordModal();
     }
   });
+}
+
+if (sendForgotCodeBtn) {
+  sendForgotCodeBtn.addEventListener("click", requestPasswordResetCode);
 }
 
 if (registerBtn) {
@@ -200,15 +234,65 @@ async function loginUser(event) {
   }
 }
 
+async function requestPasswordResetCode() {
+  const email = forgotEmailInput ? forgotEmailInput.value.trim() : "";
+
+  if (!email) {
+    showToast("Email é obrigatório", "error");
+    return;
+  }
+
+  try {
+    sendForgotCodeBtn.disabled = true;
+    sendForgotCodeBtn.textContent = "Enviando...";
+
+    const response = await fetch("/auth/forgot-password/request", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      showToast(data.message || "Não foi possível enviar o código", "error");
+      sendForgotCodeBtn.disabled = false;
+      sendForgotCodeBtn.textContent = "Enviar código";
+      return;
+    }
+
+    showToast(data.message || "Código de verificação enviado", "success");
+
+    if (forgotSubtitle) {
+      forgotSubtitle.textContent = "Digite o código recebido e escolha a nova senha.";
+    }
+    if (forgotEmailInput) {
+      forgotEmailInput.disabled = true;
+    }
+    [forgotCodeInput, forgotPasswordInput, forgotPasswordConfirmInput, confirmForgotPasswordBtn].forEach((el) => {
+      if (el) el.classList.remove("hidden-block");
+    });
+  } catch (error) {
+    console.error(error);
+    showToast("Erro de conexão com o servidor", "error");
+    sendForgotCodeBtn.disabled = false;
+    sendForgotCodeBtn.textContent = "Enviar código";
+  }
+}
+
 async function resetPassword(event) {
   event.preventDefault();
 
-  const email = document.getElementById("forgot-email").value.trim();
-  const password = document.getElementById("forgot-password").value.trim();
-  const passwordConfirm = document.getElementById("forgot-password-confirm").value.trim();
+  const email = forgotEmailInput ? forgotEmailInput.value.trim() : "";
+  const code = forgotCodeInput ? forgotCodeInput.value.trim() : "";
+  const password = forgotPasswordInput ? forgotPasswordInput.value.trim() : "";
+  const passwordConfirm = forgotPasswordConfirmInput ? forgotPasswordConfirmInput.value.trim() : "";
 
-  if (!email || !password) {
-    showToast("Email e nova senha são obrigatórios", "error");
+  if (!email || !code || !password) {
+    showToast("Email, código e nova senha são obrigatórios", "error");
     return;
   }
 
@@ -218,13 +302,13 @@ async function resetPassword(event) {
   }
 
   try {
-    const response = await fetch("/auth/forgot-password", {
+    const response = await fetch("/auth/forgot-password/confirm", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, code, newPassword: password })
     });
 
     const data = await response.json().catch(() => ({}));

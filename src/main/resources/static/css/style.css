@@ -176,6 +176,10 @@ body {
   display: flex;
 }
 
+.hidden-block {
+  display: none !important;
+}
+
 .modal-card {
   width: 100%;
   max-width: 420px;

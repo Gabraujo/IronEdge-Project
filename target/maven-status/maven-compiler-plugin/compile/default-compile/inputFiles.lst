@@ -7,6 +7,7 @@ C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedg
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\config\SecurityConfig.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\repository\InvestmentRepository.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\DesktopLauncher.java
+C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\dto\PasswordResetRequest.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\InvestmentController.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\model\Transaction.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\DashboardController.java
@@ -18,13 +19,16 @@ C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedg
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\DesktopAppLauncher.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\model\Investment.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\BudgetService.java
+C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\repository\PasswordResetTokenRepository.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\DashBoardService.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\GoalService.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\config\SecurityBeans.java
+C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\model\PasswordResetToken.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\GoalController.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\service\UserService.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\repository\BudgetRepository.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\SummaryController.java
+C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\dto\PasswordResetConfirmRequest.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\dto\AuthRequest.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\controller\TransactionController.java
 C:\Users\gabri\Documents\Repositorios\IronEdge-Project\src\main\java\com\ironedge\dto\TransactionDTO.java

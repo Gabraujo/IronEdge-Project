@@ -92,14 +92,16 @@
     <div id="forgotPasswordModal" class="modal-overlay">
       <div class="modal-card">
         <h2>Redefinir Senha</h2>
-        <p>Informe seu e-mail e a nova senha.</p>
+        <p id="forgot-subtitle">Informe seu e-mail para receber um código de verificação.</p>
         <form onsubmit="resetPassword(event)">
           <input id="forgot-email" type="email" placeholder="Email" required />
-          <input id="forgot-password" type="password" placeholder="Nova senha" required />
-          <input id="forgot-password-confirm" type="password" placeholder="Confirmar nova senha" required />
+          <input id="forgot-code" class="hidden-block" type="text" inputmode="numeric" placeholder="Código de verificação" />
+          <input id="forgot-password" class="hidden-block" type="password" placeholder="Nova senha" />
+          <input id="forgot-password-confirm" class="hidden-block" type="password" placeholder="Confirmar nova senha" />
           <div class="modal-actions">
             <button type="button" class="btn-secondary" id="cancelForgotPassword">Cancelar</button>
-            <button type="submit">Salvar</button>
+            <button type="button" id="sendForgotCode">Enviar código</button>
+            <button type="submit" id="confirmForgotPassword" class="hidden-block">Redefinir</button>
           </div>
         </form>
       </div>
